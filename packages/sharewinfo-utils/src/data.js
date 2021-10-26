@@ -19,6 +19,7 @@ export const recursionData = (list, keyName, parentKeyName, rootValue) => {
     childNodes.forEach((o) => {
       const childs = list.filter((c) => c[parentKeyName] === o[keyName]);
       o.leveKey = leveKey ? `${leveKey}-${o[keyName]}` : o[keyName];
+      o.key = o[keyName]
       if (childs.length) {
         o.children = getData(childs, o.leveKey);
         res.push(o);
@@ -28,7 +29,12 @@ export const recursionData = (list, keyName, parentKeyName, rootValue) => {
     });
     return res;
   }
-  const roots = list.filter((o) => o[parentKeyName] === rootValue);
+  let roots = [];
+  if(typeof rootValue === "function"){
+    roots = list.filter((o) => rootValue(o))
+  } else {
+    roots = list.filter((o) => o[parentKeyName] === rootValue)
+  }
   getData(roots, '');
   return roots;
 };
